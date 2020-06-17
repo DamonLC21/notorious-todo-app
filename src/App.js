@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import TodoList from './components/TodoList'
 import TodoForm from './components/TodoForm'
+import Login from './components/Login'
+import { Route } from 'react-router-dom'
 import './App.css';
 
-const todoURL = "http://localhost:3000/api/v1/todos"
+const todoURL = "http://localhost:3000/api/v1/todos/"
 
 class App extends Component {
 
@@ -13,6 +15,29 @@ class App extends Component {
 
   componentDidMount(){
     this.getTodos()
+  }
+
+  deleteTodo = (id) => {
+    let todos = this.state.todos.filter(todo => todo.id !== id )
+    
+    this.setState({todos})
+
+    fetch(`${todoURL}${id}`, {
+      method: "DELETE"
+    })
+  }
+
+  updateTodo = (updatedTodo) => {
+    let todos = this.state.todos.map(todo => todo.id === updatedTodo.id ? updatedTodo : todo)
+    this.setState({todos})
+
+    fetch(`${todoURL}${updatedTodo.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': "application/json"
+      },
+      body: JSON.stringify({todo: updatedTodo})
+    })
   }
 
   getTodos = () => {
@@ -28,7 +53,7 @@ class App extends Component {
 
     let newTodo = {
       ...todo,
-      user_id: 4
+      user_id: 5
     }
 
     fetch(todoURL, {
@@ -44,8 +69,15 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Todo App</h1>
-        <TodoForm addTodo={this.addTodo} />
-        <TodoList todos={this.state.todos} />
+        <Route exact path="/" render={(routerProps) => {
+          return (
+            <>
+              <TodoForm submitAction={this.addTodo} />
+              <TodoList todos={this.state.todos} deleteTodo={this.deleteTodo} submitAction={this.updateTodo} />
+            </>
+          )
+        }}/>
+        <Route path="/login" render={(routerProps) => <Login {...routerProps} />} />
       </div>
     );
   } 

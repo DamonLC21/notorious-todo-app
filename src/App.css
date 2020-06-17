@@ -27,10 +27,21 @@ body{
   width: 300px;
   display: flex;
   flex-direction: column;
-  padding: 50px;
   border-radius: 6px;
 }
 
 .todo-form input{
   margin: 5px;
+}
+
+.delete {
+  background-color: rgb(194, 33, 33);
+  color: white;
+  border-radius: 6px;
+}
+
+.edit {
+  background-color: rgb(33, 97, 194);
+  color: white;
+  border-radius: 6px;
 }
